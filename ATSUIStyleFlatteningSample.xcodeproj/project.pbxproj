@@ -109,7 +109,7 @@
 /* Begin PBXNativeTarget section */
 		8D0C4E890486CD37000505A6 /* ATSUIStyleFlatteningSample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BE38D2BE0C502DFA0062DB07 /* Build configuration list for PBXNativeTarget "ATSUIStyleFlatteningSample" */;
+			buildConfigurationList = BEA161180B7CD9FC000D6DB0 /* Build configuration list for PBXNativeTarget "ATSUIStyleFlatteningSample" */;
 			buildPhases = (
 				8D0C4E8C0486CD37000505A6 /* Resources */,
 				8D0C4E8F0486CD37000505A6 /* Sources */,
@@ -131,10 +131,12 @@
 /* Begin PBXProject section */
 		20286C28FDCF999611CA2CEA /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = BE38D2C20C502DFA0062DB07 /* Build configuration list for PBXProject "ATSUIStyleFlatteningSample" */;
+			buildConfigurationList = BEA161140B7CD9FC000D6DB0 /* Build configuration list for PBXProject "ATSUIStyleFlatteningSample" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 20286C29FDCF999611CA2CEA /* ATSUIStyleFlatteningSample */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				8D0C4E890486CD37000505A6 /* ATSUIStyleFlatteningSample */,
 			);
@@ -165,7 +167,7 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/tcsh;
+			shellPath = /bin/sh;
 			shellScript = "xcodebuild installsrc SRCROOT=$DSTROOT/Developer/Examples/ATSUI/Style\\ Flattening\n/bin/rm -rf $DSTROOT/Developer/Examples/ATSUI/Style\\ Flattening/build/\n/usr/sbin/chown root:wheel $DSTROOT/Developer/Examples/ATSUI/Style\\ Flattening/*\n";
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -201,98 +203,102 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		BE38D2BF0C502DFA0062DB07 /* Development */ = {
+		BEA161150B7CD9FC000D6DB0 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ATSUIStyleFlatteningSample_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				PREBINDING = NO;
-				PRODUCT_NAME = ATSUIStyleFlatteningSample;
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = app;
-				ZERO_LINK = YES;
+				ARCHS = "$(NATIVE_ARCH)";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
 			};
 			name = Development;
 		};
-		BE38D2C00C502DFA0062DB07 /* Deployment */ = {
+		BEA161160B7CD9FC000D6DB0 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ATSUIStyleFlatteningSample_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				PREBINDING = NO;
-				PRODUCT_NAME = ATSUIStyleFlatteningSample;
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = app;
-				ZERO_LINK = NO;
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
 			};
 			name = Deployment;
 		};
-		BE38D2C10C502DFA0062DB07 /* Default */ = {
+		BEA161170B7CD9FC000D6DB0 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ATSUIStyleFlatteningSample_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = ATSUIStyleFlatteningSample;
-				SKIP_INSTALL = YES;
-				WRAPPER_EXTENSION = app;
+				ARCHS = "$(NATIVE_ARCH)";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				VALID_ARCHS = "ppc7400 ppc970 i386 ppc";
 			};
 			name = Default;
 		};
-		BE38D2C30C502DFA0062DB07 /* Development */ = {
+		BEA161190B7CD9FC000D6DB0 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				ARCHS = "$(NATIVE_ARCH)";
+				COPY_PHASE_STRIP = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ATSUIStyleFlatteningSample_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = $DSTROOT/Developer/Examples/ATSUI/Basics;
+				PRODUCT_NAME = ATSUIStyleFlatteningSample;
+				SKIP_INSTALL = NO;
+				WRAPPER_EXTENSION = app;
 			};
 			name = Development;
 		};
-		BE38D2C40C502DFA0062DB07 /* Deployment */ = {
+		BEA1611A0B7CD9FC000D6DB0 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				ARCHS = "$(NATIVE_ARCH)";
+				COPY_PHASE_STRIP = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ATSUIStyleFlatteningSample_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = $DSTROOT/Developer/Examples/ATSUI/Basics;
+				PRODUCT_NAME = ATSUIStyleFlatteningSample;
+				SKIP_INSTALL = NO;
+				WRAPPER_EXTENSION = app;
 			};
 			name = Deployment;
 		};
-		BE38D2C50C502DFA0062DB07 /* Default */ = {
+		BEA1611B0B7CD9FC000D6DB0 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				ARCHS = "$(NATIVE_ARCH)";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ATSUIStyleFlatteningSample_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = $DSTROOT/Developer/Examples/ATSUI/Basics;
+				PRODUCT_NAME = ATSUIStyleFlatteningSample;
+				SKIP_INSTALL = NO;
+				WRAPPER_EXTENSION = app;
 			};
 			name = Default;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BE38D2BE0C502DFA0062DB07 /* Build configuration list for PBXNativeTarget "ATSUIStyleFlatteningSample" */ = {
+		BEA161140B7CD9FC000D6DB0 /* Build configuration list for PBXProject "ATSUIStyleFlatteningSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BE38D2BF0C502DFA0062DB07 /* Development */,
-				BE38D2C00C502DFA0062DB07 /* Deployment */,
-				BE38D2C10C502DFA0062DB07 /* Default */,
+				BEA161150B7CD9FC000D6DB0 /* Development */,
+				BEA161160B7CD9FC000D6DB0 /* Deployment */,
+				BEA161170B7CD9FC000D6DB0 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		BE38D2C20C502DFA0062DB07 /* Build configuration list for PBXProject "ATSUIStyleFlatteningSample" */ = {
+		BEA161180B7CD9FC000D6DB0 /* Build configuration list for PBXNativeTarget "ATSUIStyleFlatteningSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BE38D2C30C502DFA0062DB07 /* Development */,
-				BE38D2C40C502DFA0062DB07 /* Deployment */,
-				BE38D2C50C502DFA0062DB07 /* Default */,
+				BEA161190B7CD9FC000D6DB0 /* Development */,
+				BEA1611A0B7CD9FC000D6DB0 /* Deployment */,
+				BEA1611B0B7CD9FC000D6DB0 /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;

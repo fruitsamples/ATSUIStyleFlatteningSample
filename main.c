@@ -8,7 +8,7 @@ information to a persistent binary format. The APIs used below
 require Mac OS X 10.2 Jaguar and later. See the ReadMe file for
 more information.
 
-Version: <1.0>
+Version: <1.1>
 
 Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
 Computer, Inc. ("Apple") in consideration of your agreement to the
@@ -48,7 +48,7 @@ AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
 STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 
-Copyright © 2004 Apple Computer, Inc., All Rights Reserved
+Copyright © 2004-2007 Apple Inc., All Rights Reserved
 
 */
 
@@ -76,7 +76,7 @@ static UniChar 		gTestString[] =
 		0x0069, 0x0073,	0x0020,											// is<sp>
 		0x0061, 0x0020, 0x0073, 0x006D, 0x0061, 0x006C, 0x006C, 0x0020,	// a<sp>small<sp>
 		0x004C, 0x0069, 0x0074, 0x0074, 0x006C, 0x0065, 0x0020,			// Little<sp>
-		0x0054, 0x0045, 0x0053, 0x0054, 0x002E,	0x0020,					// Test.
+		0x0054, 0x0045, 0x0053, 0x0054, 0x002E,	0x0020,					// Test.<sp>
 		0x0046, 0x006C, 0x0075, 0x0066, 0x0066, 0x0079, 0x0020,			// Fluffy<sp>
 		0x0050, 0x0069, 0x006C, 0x006C, 0x006F, 0x0077, 0x0073 };		// Pillows
 		
@@ -115,8 +115,10 @@ static RGBColor			gInfoStyleFontColor = {0xFFFF,0,0};
 // Function Prototypes
 // ------------------------------------------------------------------------------------
 
+//static
+//OSStatus RunRoundTripFlatteningSample( WindowRef windowRef );
 static
-OSStatus RunRoundTripFlatteningSample( WindowRef windowRef );
+OSStatus RunRoundTripFlatteningSample( EventHandlerCallRef myHandlerRef, EventRef event, void *userData );
 
 static
 OSStatus RoundTripFlatten( CGContextRef cgContext, Fixed currentXPos,
@@ -156,10 +158,15 @@ OSStatus AddTextLabel( const char *textString,
 
 int main(int argc, char* argv[])
 {
-    IBNibRef 		nibRef;
-    WindowRef 		window;
-    
-    OSStatus		err;
+    IBNibRef					nibRef;
+    WindowRef					window;
+	
+	static const EventTypeSpec	viewEventSpec[] =
+		{	{ kEventClassControl,	kEventControlDraw } };
+		
+	HIViewRef					myHIViewRef;
+	static const HIViewID		myHIViewID = { 'aWnd', 0 };
+    OSStatus					err;
 
     // Create a Nib reference passing the name of the nib file (without the .nib extension)
     // CreateNibReference only searches into the application bundle.
@@ -175,17 +182,16 @@ int main(int argc, char* argv[])
     // InterfaceBuilder when the nib is created.
     err = CreateWindowFromNib(nibRef, CFSTR("MainWindow"), &window);
     require_noerr( err, CantCreateWindow );
+	
+	HIViewFindByID( HIViewGetRoot(window), myHIViewID, & myHIViewRef );
+	err  = HIViewInstallEventHandler( myHIViewRef, NewEventHandlerUPP( RunRoundTripFlatteningSample ), GetEventTypeCount( viewEventSpec ), viewEventSpec, (void *) myHIViewRef, NULL );
 
     // We don't need the nib reference anymore.
     DisposeNibReference(nibRef);
     
     // The window was created hidden so show it.
     ShowWindow( window );
-	
-	// Run the sample code
-	err = RunRoundTripFlatteningSample( window );
-	check_noerr( err );
-    
+	    
     // Call the event loop
     RunApplicationEventLoop();
 
@@ -201,43 +207,35 @@ CantGetNibRef:
 
 static
 OSStatus RunRoundTripFlatteningSample( 
-	WindowRef	windowRef )
+	EventHandlerCallRef myHandlerRef, EventRef event, void *userData )
 {
 	OSStatus				err;
-	CGrafPtr				windowPort;
 	CGContextRef			cgContext;
-	Rect					windowRect;
-	PixMapHandle			pixMap;
 	ATSUTextMeasurement		xPosition;
 	ATSUTextMeasurement		yPosition;
+	HIRect					bounds;
 
 	// initialize the global styles 
 	err = InitializeGlobalStyles();
 	require_noerr( err, RunATSUIFlatteningTest_err );
 	
-	// get the port for the window
-	windowPort = GetWindowPort( windowRef );
-	
-	// get the port's pixMap. This will be used to find the viewable window area
-	pixMap = GetPortPixMap( windowPort );
-	
-	// get the bounds for the port
-	GetPortBounds( windowPort, &windowRect );
-	
-	// Offset the rect to obtain the window's viewable area
-	OffsetRect( &windowRect, -(**pixMap).bounds.left, -(**pixMap).bounds.top );
+	err = GetEventParameter( event, kEventParamCGContextRef, typeCGContextRef, NULL, sizeof( CGContextRef ), NULL, &cgContext );
+	if ( err != noErr )
+	{
+		fprintf( stderr, "Error %d getting cgContext\n", err );
+		return err;
+	}
+
+	HIViewGetBounds( ( HIViewRef ) userData, &bounds );
+	CGContextTranslateCTM( cgContext, 0, bounds.size.height );
+	CGContextScaleCTM( cgContext, 1.0, -1.0 );
 	
 	// calculate the x and y positions
-	xPosition = Long2Fix( windowRect.left + kGlobalXOffsetValue );
-	yPosition = Long2Fix( windowRect.bottom - kGlobalYSpaceBetweenTests );
-	
-	// start the cgContext for the port
-	err = QDBeginCGContext( windowPort, &cgContext );
-	require_noerr( err, RunATSUIFlatteningTest_err );
+	xPosition = Long2Fix( bounds.origin.x + kGlobalXOffsetValue );
+	yPosition = Long2Fix( bounds.size.height - kGlobalYSpaceBetweenTests );
 	
 	// add a label to the test
-	err = AddTextLabel( "Reference Style\0", cgContext, xPosition, 
-		&yPosition );
+	err = AddTextLabel( "Reference Style\0", cgContext, xPosition, &yPosition );
 	require_noerr( err, RunATSUIFlatteningTest_err );
 	
 	// create the layout for the default run information
@@ -250,8 +248,7 @@ OSStatus RunRoundTripFlatteningSample(
 	yPosition -= Long2Fix( kGlobalYSpaceBetweenTests );
 	
 	// add a label to the test
-	err = AddTextLabel( "Flattened And Unflattened Sample\0", cgContext,
-		xPosition, &yPosition );
+	err = AddTextLabel( "Flattened And Unflattened Sample\0", cgContext, xPosition, &yPosition );
 	require_noerr( err, RunATSUIFlatteningTest_err );
 	
 	// run the default options for this test
@@ -260,16 +257,11 @@ OSStatus RunRoundTripFlatteningSample(
 		gTestString, gTestStringLen );
 	require_noerr( err, RunATSUIFlatteningTest_err );
 	
-	// kill the cgContext for the port
-	err = QDEndCGContext( windowPort, &cgContext );
-	require_noerr( err, RunATSUIFlatteningTest_err );
-	
-
 RunATSUIFlatteningTest_err:
 
 	return err;
-
 }
+
 
 // ------------------------------------------------------------------------------------
 // RoundTripFlatten															[INTERNAL]
@@ -321,9 +313,6 @@ OSStatus RoundTripFlatten(
 		styleArraySize, styleArray, suggestedStreamBufferSize,
 		streamBuffer, &actualStreamBufferSize );
 	require_noerr( err, RoundTripFlatteningSample_err );
-	
-	
-	
 	
 	// next, try to unflatten the stream that was just flattened. First, try
 	// to get counts of the stuff in the stream, so that we can allocate
@@ -382,7 +371,6 @@ RoundTripFlatteningSample_err:
 
 	// return noErr so that our error and debugging messages printout
 	return noErr;	
-
 }
 
 // ------------------------------------------------------------------------------------
@@ -501,7 +489,6 @@ CreateLayoutForStyleAndRunInfo_err:
 	}
 	
 	return err;
-
 }
 
 // ------------------------------------------------------------------------------------
@@ -597,7 +584,6 @@ OSStatus InitializeGlobalStyles( void )
 InitializeGlobalStyles_err:
 
 	return err;
-	
 }
 
 // ------------------------------------------------------------------------------------
@@ -651,7 +637,6 @@ OSStatus CreateStyleObjectWithFontName(
 CreateStyleObjectWithFontName_err: 
 
 	return err;
-	
 }
 
 // ------------------------------------------------------------------------------------
@@ -699,7 +684,6 @@ OSStatus AddFunkyVariationsAndFeatures(
 		err = ATSUSetVariations( styleToMangle, 1, &variationAxis,
 			&variationMaximum );
 		require_noerr( err, AddFunkyVariationsAndFeatures_err );
-		
 	}
 	
 	
@@ -781,7 +765,6 @@ OSStatus AddFunkyVariationsAndFeatures(
 				&selectorBuffer[selectorCount - 1] );
 			require_noerr( err, AddFunkyVariationsAndFeatures_err );
 		}
-		
 	}
 		
 	// that should be enough style perversion for now!
@@ -805,7 +788,6 @@ AddFunkyVariationsAndFeatures_err:
 	}
 
 	return err;
-	
 }
 
 // ------------------------------------------------------------------------------------
@@ -881,5 +863,4 @@ AddTextLabel_err:
 	}
 	
 	return err;
-
 }
